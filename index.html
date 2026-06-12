@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="theme-color" content="#0a0f1e">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>طالع بینی عناصر</title>
+    <link rel="manifest" href="/Astro/manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(145deg, #0a0f1e 0%, #0c1222 100%);
+            font-family: 'Segoe UI', 'Roboto', 'Tahoma', sans-serif;
+            padding: 12px;
+            color: #eee;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        
+        /* هدر با لوگو */
+        .header {
+            background: linear-gradient(135deg, #12182e, #0e1327);
+            border-radius: 25px;
+            padding: 12px 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid #c9942e;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(201,148,46,0.08) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
+            flex-wrap: wrap;
+        }
+        .crystal {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(145deg, #c9942e, #8a5c1a);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(201,148,46,0.4);
+            animation: glow 3s ease-in-out infinite;
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 5px 15px rgba(201,148,46,0.4); }
+            50% { box-shadow: 0 5px 30px rgba(201,148,46,0.7); }
+        }
+        .crystal span {
+            font-size: 28px;
+        }
+        .logo-text {
+            text-align: center;
+        }
+        .logo-text h1 {
+            color: #e8c98a;
+            font-size: 20px;
+            letter-spacing: 1px;
+        }
+        .logo-text p {
+            color: #8a9ac0;
+            font-size: 9px;
+        }
+        
+        /* تب‌های اصلی */
+        .main-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .main-tab {
+            background: #1e2642;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 40px;
+            color: #b9c3dd;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .main-tab.active {
+            background: #c9942e;
+            color: #0a0f1e;
+        }
+        
+        /* پنل‌های اصلی */
+        .section-panel {
+            display: none;
+        }
+        .section-panel.active-panel {
+            display: block;
+        }
+        
+        /* فرم‌ها و ورودی‌ها */
+        .input-panel {
+            background: #0c1122cc;
+            backdrop-filter: blur(10px);
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 20px;
+            border: 1px solid #2a3458;
+        }
+        .date-inputs {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        select, input {
+            background: #1e2642;
+            color: #ffefcf;
+            border: 1px solid #4a5a7a;
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+        button {
+            background: #c9942e;
+            color: #0a0f1e;
+            border: none;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        button:hover {
+            background: #dfaa4a;
+            transform: scale(0.98);
+        }
+        
+        /* تب‌های داخلی */
+        .inner-tabs {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            justify-content: center;
+        }
+        .inner-tab {
+            background: #1e2642;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 25px;
+            color: #b9c3dd;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        .inner-tab.active {
+            background: #c9942e;
+            color: #0a0f1e;
+        }
+        .page {
+            background: #080e1c;
+            border-radius: 15px;
+            padding: 15px;
+            display: none;
+        }
+        .page.active-page {
+            display: block;
+        }
+        
+        /* استایل‌های محتوایی */
+        .section-title {
+            font-size: 16px;
+            color: #e8c98a;
+            margin-bottom: 12px;
+            border-right: 3px solid #c9942e;
+            padding-right: 10px;
+        }
+        .info-row {
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px dashed #2a3458;
+        }
+        .info-label {
+            display: inline-block;
+            width: 115px;
+            font-weight: bold;
+            color: #dbb45c;
+            font-size: 12px;
+        }
+        .info-value {
+            color: #f0e6d0;
+            font-size: 12px;
+        }
+        .destiny-text {
+            background: #0a1025;
+            padding: 12px;
+            border-radius: 12px;
+            margin-top: 10px;
+            line-height: 1.7;
+            text-align: justify;
+            font-size: 12px;
+        }
+        .card {
+            background: #11172d;
+            padding: 8px;
+            border-radius: 10px;
+            margin: 6px 0;
+        }
+        .good-badge {
+            color: #6bcf7f;
+        }
+        .bad-badge {
+            color: #ff6b6b;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .luck-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #e8c98a;
+            text-align: center;
+            margin: 8px 0;
+        }
+        .result-section {
+            margin-bottom: 12px;
+            padding: 10px;
+            background: #0a1025;
+            border-radius: 12px;
+        }
+        .result-section h4 {
+            color: #c9942e;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 25px;
+            padding: 12px;
+            font-size: 10px;
+            color: #5a6888;
+            border-top: 1px solid #2a3458;
+        }
+        
+        @media (max-width: 600px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .info-label { width: 105px; }
+        }
+    </style>
+</head>
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js");
+}
+</script>
+<body>
+<div class="container">
+    <!-- هدر با لوگو -->
+    <div class="header">
+        <div class="logo">
+            <div class="crystal">
+                <span>🔮</span>
+            </div>
+            <div class="logo-text">
+                <h1>طالع‌بین عناصر</h1>
+                <p>کشف راز زندگی از طریق عناصر و اعداد کارمایی</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- تب‌های اصلی -->
+    <div class="main-tabs">
+        <button class="main-tab active" onclick="showMainSection('daily')">📅 طالع روزانه</button>
+        <button class="main-tab" onclick="showMainSection('custom')">📖 طالع هر تاریخ</button>
+        <button class="main-tab" onclick="showMainSection('karmic')">🔢 تحلیل عدد کارمایی</button>
+    </div>
+
+    <!-- ==================== بخش ۱: طالع روزانه شخصی ==================== -->
+    <div id="dailySection" class="section-panel active-panel">
+        <div class="input-panel">
+            <div style="margin-bottom:8px;color:#e8c98a;font-size:13px;">📌 تاریخ تولد شما</div>
+            <div class="date-inputs">
+                <select id="birthYear"></select>
+                <select id="birthMonth"></select>
+                <select id="birthDay"></select>
+            </div>
+            <div style="margin:12px 0 8px 0;color:#e8c98a;font-size:13px;">📅 تاریخ امروز</div>
+            <div class="date-inputs">
+                <select id="dailyYear"></select>
+                <select id="dailyMonth"></select>
+                <select id="dailyDay"></select>
+            </div>
+            <button id="dailyBtn">✨ نمایش طالع امروز ✨</button>
+        </div>
+        <div class="inner-tabs" id="dailyTabs">
+            <button class="inner-tab active" onclick="showInnerPage('daily',1)">1.مبانی</button>
+            <button class="inner-tab" onclick="showInnerPage('daily',2)">2.انرژی</button>
+            <button class="inner-tab" onclick="showInnerPage('daily',3)">3.جهت</button>
+            <button class="inner-tab" onclick="showInnerPage('daily',4)">4.سنگ</button>
+            <button class="inner-tab" onclick="showInnerPage('daily',5)">5.رنگ</button>
+            <button class="inner-tab" onclick="showInnerPage('daily',6)">6.غذا</button>
+            <button class="inner-tab" onclick="showInnerPage('daily',7)">7.جفت</button>
+            <button class="inner-tab" onclick="showInnerPage('daily',8)">8.اعداد</button>
+            <button class="inner-tab" onclick="showInnerPage('daily',9)">9.رفتار</button>
+            <button class="inner-tab" onclick="showInnerPage('daily',10)">10.پیشگویی</button>
+        </div>
+        <div id="dailyPage1" class="page active-page"><div class="section-title">شناسه کیهانی</div><div id="dailyP1"></div></div>
+        <div id="dailyPage2" class="page"><div class="section-title">انرژی روز</div><div id="dailyP2"></div></div>
+        <div id="dailyPage3" class="page"><div class="section-title">جهت روز</div><div id="dailyP3"></div></div>
+        <div id="dailyPage4" class="page"><div class="section-title">سنگ روز</div><div id="dailyP4"></div></div>
+        <div id="dailyPage5" class="page"><div class="section-title">رنگ روز</div><div id="dailyP5"></div></div>
+        <div id="dailyPage6" class="page"><div class="section-title">غذای روز</div><div id="dailyP6"></div></div>
+        <div id="dailyPage7" class="page"><div class="section-title">جفت روز</div><div id="dailyP7"></div></div>
+        <div id="dailyPage8" class="page"><div class="section-title">اعداد شانس</div><div id="dailyP8"></div></div>
+        <div id="dailyPage9" class="page"><div class="section-title">رفتارشناسی</div><div id="dailyP9"></div></div>
+        <div id="dailyPage10" class="page"><div class="section-title">پیشگویی</div><div id="dailyP10"></div></div>
+    </div>
+
+    <!-- ==================== بخش ۲: طالع هر تاریخ ==================== -->
+    <div id="customSection" class="section-panel">
+        <div class="input-panel">
+            <div class="date-inputs">
+                <select id="yearSelect"></select>
+                <select id="monthSelect"></select>
+                <select id="daySelect"></select>
+            </div>
+            <button id="customBtn">📖 نمایش طالع این تاریخ</button>
+        </div>
+        <div class="inner-tabs" id="customTabs">
+            <button class="inner-tab active" onclick="showInnerPage('custom',1)">1.مبانی</button>
+            <button class="inner-tab" onclick="showInnerPage('custom',2)">2.انرژی</button>
+            <button class="inner-tab" onclick="showInnerPage('custom',3)">3.جهت</button>
+            <button class="inner-tab" onclick="showInnerPage('custom',4)">4.سنگ</button>
+            <button class="inner-tab" onclick="showInnerPage('custom',5)">5.رنگ</button>
+            <button class="inner-tab" onclick="showInnerPage('custom',6)">6.غذا</button>
+            <button class="inner-tab" onclick="showInnerPage('custom',7)">7.جفت</button>
+            <button class="inner-tab" onclick="showInnerPage('custom',8)">8.اعداد</button>
+            <button class="inner-tab" onclick="showInnerPage('custom',9)">9.رفتار</button>
+            <button class="inner-tab" onclick="showInnerPage('custom',10)">10.پیشگویی</button>
+        </div>
+        <div id="customPage1" class="page active-page"><div class="section-title">شناسه کیهانی</div><div id="customP1"></div></div>
+        <div id="customPage2" class="page"><div class="section-title">انرژی روز</div><div id="customP2"></div></div>
+        <div id="customPage3" class="page"><div class="section-title">جهت روز</div><div id="customP3"></div></div>
+        <div id="customPage4" class="page"><div class="section-title">سنگ روز</div><div id="customP4"></div></div>
+        <div id="customPage5" class="page"><div class="section-title">رنگ روز</div><div id="customP5"></div></div>
+        <div id="customPage6" class="page"><div class="section-title">غذای روز</div><div id="customP6"></div></div>
+        <div id="customPage7" class="page"><div class="section-title">جفت روز</div><div id="customP7"></div></div>
+        <div id="customPage8" class="page"><div class="section-title">اعداد شانس</div><div id="customP8"></div></div>
+        <div id="customPage9" class="page"><div class="section-title">رفتارشناسی</div><div id="customP9"></div></div>
+        <div id="customPage10" class="page"><div class="section-title">پیشگویی</div><div id="customP10"></div></div>
+    </div>
+
+    <!-- ==================== بخش ۳: تحلیل عدد کارمایی ==================== -->
+    <div id="karmicSection" class="section-panel">
+        <div class="input-panel">
+            <div class="grid-2">
+                <div>
+                    <label style="color:#dbb45c;font-size:12px;">🔢 عدد کارمایی (۱ تا ۹)</label>
+                    <input type="number" id="karmicNumber" min="1" max="9" step="1" placeholder="مثال: 7" style="width:100%;margin-top:5px;">
+                </div>
+                <div>
+                    <label style="color:#dbb45c;font-size:12px;">🧬 عنصر ماه</label>
+                    <select id="karmicElement" style="width:100%;margin-top:5px;">
+                        <option value="یخ">❄️ یخ</option><option value="آتش">🔥 آتش</option><option value="خاک">🌍 خاک</option>
+                        <option value="رعد">⚡ رعد</option><option value="سنگ">🪨 سنگ</option><option value="گیاه">🌿 گیاه</option>
+                        <option value="چوب">🪵 چوب</option><option value="باد">🌬️ باد</option><option value="آب روان">💧 آب روان</option>
+                        <option value="فلز">⚙️ فلز</option><option value="خلأ">◻️ خلأ</option><option value="نور">✨ نور</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid-2" style="margin-top:12px;">
+                <div>
+                    <label style="color:#dbb45c;font-size:12px;">☯ یین / یانگ</label>
+                    <select id="karmicYinyang" style="width:100%;margin-top:5px;">
+                        <option value="یانگ">☯ یانگ (فعال)</option>
+                        <option value="یین">☯ یین (پذیرا)</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="color:#dbb45c;font-size:12px;">🦁 سمبل حیات</label>
+                    <select id="karmicTotem" style="width:100%;margin-top:5px;">
+                        <option value="شیر">🦁 شیر</option><option value="عقاب">🦅 عقاب</option>
+                        <option value="مار">🐍 مار</option><option value="لاک پشت">🐢 لاک پشت</option>
+                    </select>
+                </div>
+            </div>
+            <button id="karmicBtn">✨ تحلیل کامل زندگی ✨</button>
+        </div>
+        <div id="karmicResult" style="background:#080e1c; border-radius:15px; padding:18px;">
+            <div class="section-title" style="margin-bottom:12px;">🔮 تحلیل شما</div>
+            <div style="text-align:center; color:#8a9ac0;">اطلاعات خود را وارد کنید</div>
+        </div>
+    </div>
+
+    <footer>
+        طراحی توسط میثاق سلاطین
+    </footer>
+</div>
+
+<script>
+// ============================================
+// سیستم جامع - طالع روزانه + طالع هر تاریخ + تحلیل عدد کارمایی
+// طراحی توسط میثاق سلاطین
+// ============================================
+
+// ==================== داده‌های پایه ====================
+const elementList = ["یخ","آتش","خاک","رعد","سنگ","گیاه","چوب","باد","آب روان","فلز","خلأ","نور"];
+const elementDesc = {
+    "یخ":"یخ: سکون مطلق، مرز میان زندگی و ایستایی",
+    "آتش":"آتش: دگرگونی، سوزاندن کهنه برای تولد نو",
+    "خاک":"خاک: باروری، مادر زمین، بنیان زندگی",
+    "رعد":"رعد: شکستن نظم، هشدار از بالا",
+    "سنگ":"سنگ: حافظه زمین، فسیل زمان",
+    "گیاه":"گیاه: رشد آرام، مرگ موقتی و تولد دوباره",
+    "چوب":"چوب: ساختار، ابزارسازی",
+    "باد":"باد: پراکندگی اندیشه، خبررسان",
+    "آب روان":"آب روان: جریان زندگی",
+    "فلز":"فلز: برندگی، آینگی",
+    "خلأ":"خلأ: نبودن، پذیرندگی مطلق",
+    "نور":"نور: آگاهی، دید"
+};
+
+// لیست‌های روزانه
+const dailyStones = ["الماس","یاقوت","زمرد","فیروزه","لاجورد","عقیق","کهربا","مرجان","مروارید","اوپال","یشم سبز","کوارتز صورتی","آمیتیست","سیترین","گارنت","تورمالین","لابرادوریت","سلنیت","ابسیدین","کریزکولا","مالاکیت","آزوریت","هماتیت","پیریت","فلوریت","کالسیت","یدک جاسپر","چشم ببر","سنگ ماه","سنگ خورشید"];
+const dailyColors = ["قرمز","آبی","سبز","زرد","بنفش","نارنجی","صورتی","سفید","طلایی","نقره ای","فیروزه ای","مسی","برنزی","خاکستری","کرم","بادمجانی","زیتونی","خردلی","یشمی","مرجانی","کهربایی","لاجوردی","عقیقی","زعفرانی","آبی آسمانی","سبز دریایی","بنفش تیره","طوسی","نارنجی تیره","زرشکی"];
+const dailyBadColors = ["مشکی","قهوه ای تیره","خاکستری تیره","سبز تیره","زرد کدر","نارنجی سوخته","بنفش تیره","آبی سربی","قرمز تیره","صورتی تیره","نقره ای کدر","طلایی کدر","مسی زنگ","برنزی کدر","کرم سوخته","بادمجانی سوخته","زیتونی تیره","خردلی سوخته","یشمی تیره","مرجانی سوخته","کهربایی کدر","لاجوردی کدر","عقیقی کدر","زعفرانی کدر","آبی طوفانی","سبز لجنی","بنفش سوخته","طوسی سوخته","نارنجی کدر","قهوه ای زنگ"];
+const dailyFoods = ["آش رشته","خورش فسنجان","کباب کوبیده","قرمه سبزی","زرشک پلو","ماهی قزل آلا","سوپ جو","خوراک بادمجان","عدس پلو","ماکارونی","پیتزا","سالاد الویه","کوکو سبزی","خورش قورمه","آبگوشت","ته چین","دلمه","کوفته","شیرین پلو","فست فود","سالاد شیرازی","دوغ","آش دوغ","خورش آلو","خورش به","کله جوش","نرگسی","املت","سمبوسه","لازانیا"];
+const dailyHerbs = ["نعنا","بابونه","زعفران","دارچین","زنجبیل","اسطوخودوس","رزماری","آویشن","مریم گلی","بومادران","گل گاوزبان","سنبل الطیب","اکالیپتوس","هل","میخک","فلفل سیاه","زیره","گشنیز","جعفری","ترخون","ریحان","شوید","تخم شوید","چای سبز","چای سفید","قاصدک","خار مریم","بادرنجبویه","لیمو ترش","به لیمو"];
+const dailyIncense = ["عود هندی","کندر","مر","صندل","عنبر","عود سفید","عود سرخ","عود بنفش","عود آبی","عود سبز","عود سیاه","عود طلایی","بخور عنبر","بخور مریم","بخور گل","بخور چوب","بخور کهربا","بخور مرجان","بخور فیروزه","بخور لاجورد","بخور یشم","بخور کریستال","بخور آمیتیست","بخور سیترین","بخور گارنت","بخور تورمالین","بخور لابرادوریت","بخور سلنیت","بخور ابسیدین","بخور مالاکیت"];
+const dailyPerfectMate = ["آتش","خاک","باد","آب روان","سنگ","گیاه","چوب","فلز","نور","رعد","یخ","خلأ","آب روان","خاک رس","باد گرم","آتش سرد","سنگ نرم","گیاه خشک","چوب تر","فلز زنگ","نور تاریک","رعد آرام","یخ روان","خلأ پر","آتش ملایم","خاک نرم","باد تند","سنگ گرانیت","چوب درخت","گیاه تازه"];
+const dailyBadMate = ["یخ","آتش","خاک","باد","سنگ","گیاه","چوب","فلز","نور","رعد","آب روان","خلأ","آتش سوزان","خاک سخت","باد سرد","سنگ تیز","گیاه پژمرده","چوب پوسیده","فلز زنگ زده","نور کور","رعد وحشی","یخ شکننده","خلأ وحشت","آب راکد","آتش خاموش","خاک مرده","باد طوفانی","سنگ خرد","گیاه خشکیده","چوب شکسته"];
+const dailyBehaviors = [
+    ["صبور اما گوشه گیر","در تنهایی تصمیم بگیر","حرف دلت را به کسی نزن"],
+    ["پرشور و پرانرژی","هر کاری را شروع کن","ریسک کن"],
+    ["محکم و استوار","متوقف نشو","به حرف دیگران گوش نده"],
+    ["ناگهانی","کار عجیب بکن","از منطق فاصله بگیر"],
+    ["مهربان و بخشنده","به دیگران کمک کن","بخشش را تمرین کن"],
+    ["هنرمند و خلاق","نقاشی کن، بنویس","خلاقیتت را آزاد کن"],
+    ["فیلسوف و عمیق","به معنی زندگی فکر کن","کتاب بخوان"],
+    ["شاد و سرزنده","بخند، شادی کن","با دوستانت وقت بگذران"]
+];
+const dailyQualities = ["صاف","طوفانی","آرام","مواج","سوزان","یخبندان","مه آلود","شفاف","بارانی","آفتابی","ابری","گردبادی","خشک","مرطوب","معتدل","سرد","گرم","توفانی","برفی","نسیمی"];
+const dailyEnergies = ["پویا","ساکن","افزایشی","کاهشی","چرخشی","نوسانی","ثابت","ناگهانی","آرام","سریع","سنگین","سبک","مغناطیسی","الکتریکی","حرارتی","سردی","بادی","آبی","زمینی","آتشی"];
+const northP = ["خورشید","ماه","تیر","ناهید","بهرام","هرمز","کیوان","اورانوس","نپتون"];
+const westP = ["ماه","تیر","ناهید","بهرام","هرمز","کیوان","اورانوس","نپتون","خورشید"];
+const southP = ["ناهید","بهرام","هرمز","کیوان","اورانوس","نپتون","خورشید","ماه","تیر"];
+const chineseList = ["موش","گاو","ببر","خرگوش","اژدها","مار","اسب","بز","میمون","خروس","سگ","خوک"];
+const zodiacList = [[1,"حمل","شیر"],[21,"ثور","عقاب"],[52,"جوزا","مار"],[83,"سرطان","لاک پشت"],[114,"اسد","شیر"],[145,"سنبله","عقاب"],[176,"میزان","مار"],[207,"عقرب","لاک پشت"],[237,"قوس","شیر"],[267,"جدی","عقاب"],[296,"دلو","مار"],[325,"حوت","لاک پشت"]];
+
+// ==================== توابع پایه ====================
+function isLeap(y){return(y%4===0)||(y%33===1||y%33===2||y%33===3||y%33===29);}
+function getMonthDays(y,m){var d=[31,31,31,31,31,31,30,30,30,30,30,29];if(m===12&&isLeap(y))return 30;return d[m-1];}
+function getDayOfYear(y,m,d){var t=0;for(var i=1;i<m;i++)t+=getMonthDays(y,i);return t+d;}
+function getMonthElement(m,y){return elementList[(m*13+y*7)%12];}
+function getBirthElement(bY,bM){return getMonthElement(bM,bY);}
+function getDailyStone(d,m,y,be){return dailyStones[(d*23+m*17+y*11+be.length*7)%dailyStones.length];}
+function getDailyColor(d,m,y,be){return dailyColors[(d*19+m*13+y*7+be.length*5)%dailyColors.length];}
+function getDailyBadColor(d,m,y,be){return dailyBadColors[(d*29+m*11+y*5+be.length*3)%dailyBadColors.length];}
+function getDailyFood(d,m,y,be){return dailyFoods[(d*31+m*19+y*3+be.length*2)%dailyFoods.length];}
+function getDailyHerb(d,m,y,be){return dailyHerbs[(d*13+m*23+y*2+be.length*11)%dailyHerbs.length];}
+function getDailyIncense(d,m,y,be){return dailyIncense[(d*17+m*29+y*13+be.length*9)%dailyIncense.length];}
+function getDailyPerfectMate(d,m,y,be){return dailyPerfectMate[(d*11+m*31+y*7+be.length*13)%dailyPerfectMate.length];}
+function getDailyBadMate(d,m,y,be){return dailyBadMate[(d*7+m*13+y*5+be.length*17)%dailyBadMate.length];}
+function getDailyBehavior(d,m,y,be){return dailyBehaviors[(d*37+m*41+y*23+be.length*19)%dailyBehaviors.length];}
+function getDailyLucky(d,m,y,be){return(d*7+m*13+y*3+be.length*2)%30+1;}
+function getDailyQuality(d,m,y){return dailyQualities[(d*11+m*19+y*5)%dailyQualities.length];}
+function getDailyEnergy(d,m,y){return dailyEnergies[(d*5+m*23+y*7)%dailyEnergies.length];}
+function getChinese(y){return chineseList[(9+(y-1300))%12];}
+function getSignTotem(dn){for(var i=0;i<zodiacList.length;i++)if(dn>=zodiacList[i][0]&&dn<=zodiacList[i][0]+29)return{sign:zodiacList[i][1],totem:zodiacList[i][2]};return{sign:"حمل",totem:"شیر"};}
+function getDirPlanet(dn){if(dn>360)return{dir:"شرق ویژه",planet:"ستاره دنباله دار"};var p=(dn-1)%36;if(p<9)return{dir:"شمال",planet:northP[p]};if(p<18)return{dir:"غرب",planet:westP[p-9]};if(p<27)return{dir:"جنوب",planet:southP[p-18]};return{dir:"شرق",planet:"شهاب سنگ"};}
+function getYinYang(dn){return dn%2===1?"یانگ (فعال)":"یین (پذیرا)";}
+function getKarmicNumber(y,m,d){var s=y.toString()+m.toString()+d.toString(),sum=0;for(var i=0;i<s.length;i++)sum+=parseInt(s[i]);while(sum>9){var t=0;while(sum>0){t+=sum%10;sum=Math.floor(sum/10);}sum=t;}return sum;}
+
+// ==================== توابع رندر طالع ====================
+function renderPersonalHoroscope(bY,bM,bD,tY,tM,tD,prefix){
+    var be=getBirthElement(bY,bM);
+    var dn=getDayOfYear(tY,tM,tD);
+    var me=getMonthElement(tM,tY);
+    var desc=elementDesc[me]||elementDesc["خاک"];
+    var stone=getDailyStone(tD,tM,tY,be);
+    var color=getDailyColor(tD,tM,tY,be);
+    var badColor=getDailyBadColor(tD,tM,tY,be);
+    var food=getDailyFood(tD,tM,tY,be);
+    var herb=getDailyHerb(tD,tM,tY,be);
+    var incense=getDailyIncense(tD,tM,tY,be);
+    var perfectMate=getDailyPerfectMate(tD,tM,tY,be);
+    var badMate=getDailyBadMate(tD,tM,tY,be);
+    var behavior=getDailyBehavior(tD,tM,tY,be);
+    var luckyNum=getDailyLucky(tD,tM,tY,be);
+    var antiLucky=(luckyNum*3)%30+1;
+    var quality=getDailyQuality(tD,tM,tY);
+    var energy=getDailyEnergy(tD,tM,tY);
+    var signTotem=getSignTotem(dn);
+    var dirPlanet=getDirPlanet(dn);
+    var yy=getYinYang(dn);
+    var ch=getChinese(tY);
+    var kn=getKarmicNumber(bY,bM,bD);
+    var qDesc="";
+    if(quality==="طوفانی")qDesc="روز پرتلاطم است، صبور باش";
+    else if(quality==="سوزان")qDesc="انرژی بسیار بالاست";
+    else if(quality==="یخبندان")qDesc="روز سرد و حساب شده";
+    else if(quality==="مه آلود")qDesc="مسیر امروز روشن نیست";
+    else qDesc="کیفیت "+quality+": روز متعادل";
+    document.getElementById(prefix+"P1").innerHTML='<div class="grid-2"><div><div class="info-row"><span class="info-label">تاریخ تولد:</span><span class="info-value">'+bY+'/'+bM+'/'+bD+'</span></div><div class="info-row"><span class="info-label">عنصر تولد:</span><span class="info-value">'+be+'</span></div><div class="info-row"><span class="info-label">تاریخ امروز:</span><span class="info-value">'+tY+'/'+tM+'/'+tD+'</span></div><div class="info-row"><span class="info-label">عنصر امروز:</span><span class="info-value">'+me+'</span></div><div class="info-row"><span class="info-label">برج فلکی:</span><span class="info-value">'+signTotem.sign+'</span></div><div class="info-row"><span class="info-label">سمبل حیات:</span><span class="info-value">'+signTotem.totem+'</span></div></div><div><div class="info-row"><span class="info-label">سال چینی:</span><span class="info-value">'+ch+'</span></div><div class="info-row"><span class="info-label">یین/یانگ:</span><span class="info-value">'+yy+'</span></div><div class="info-row"><span class="info-label">عدد کارمایی:</span><span class="info-value">'+kn+'</span></div><div class="info-row"><span class="info-label">شماره روز سال:</span><span class="info-value">'+dn+'</span></div></div></div><div class="destiny-text">'+desc+'</div>';
+    document.getElementById(prefix+"P2").innerHTML='<div class="info-row"><span class="info-label">کیفیت روز:</span><span class="info-value">'+quality+'</span></div><div class="info-row"><span class="info-label">انرژی روز:</span><span class="info-value">'+energy+'</span></div><div class="destiny-text">'+qDesc+'<br>انرژی '+energy+' بر تمام فعالیت های امروز حاکم است.</div>';
+    document.getElementById(prefix+"P3").innerHTML='<div class="info-row"><span class="info-label">جهت روز:</span><span class="info-value">'+dirPlanet.dir+'</span></div><div class="info-row"><span class="info-label">سیاره حاکم:</span><span class="info-value">'+dirPlanet.planet+'</span></div><div class="destiny-text">جهت '+dirPlanet.dir+': '+(dirPlanet.dir==="شمال"?"آغاز و تولد":dirPlanet.dir==="غرب"?"تعادل و انتخاب":dirPlanet.dir==="جنوب"?"دگرگونی و پایان":"پیام و شگفتی")+'</div>';
+    document.getElementById(prefix+"P4").innerHTML='<div class="card"><span class="info-label">سنگ امروز:</span> '+stone+'</div><div class="destiny-text">سنگ '+stone+' را امروز همراه داشته باش.</div>';
+    document.getElementById(prefix+"P5").innerHTML='<div class="card"><span class="info-label">رنگ شانس:</span> <span class="good-badge">'+color+'</span></div><div class="card"><span class="info-label">رنگ ضد شانس:</span> <span class="bad-badge">'+badColor+'</span></div><div class="destiny-text">از '+color+' استفاده کن و از '+badColor+' دوری کن.</div>';
+    document.getElementById(prefix+"P6").innerHTML='<div class="card"><span class="info-label">غذای شانس:</span> '+food+'</div><div class="card"><span class="info-label">گیاه دارویی:</span> '+herb+'</div><div class="card"><span class="info-label">بخور مناسب:</span> '+incense+'</div><div class="destiny-text">خوردن '+food+' و دمنوش '+herb+' انرژی مثبت می آورد.</div>';
+    document.getElementById(prefix+"P7").innerHTML='<div class="card"><span class="info-label">جفت مناسب:</span> <span class="good-badge">'+perfectMate+'</span></div><div class="card"><span class="info-label">جفت نامناسب:</span> <span class="bad-badge">'+badMate+'</span></div><div class="destiny-text">با '+perfectMate+' ارتباط برقرار کن و از '+badMate+' دوری کن.</div>';
+    document.getElementById(prefix+"P8").innerHTML='<div class="card"><span class="info-label">عدد شانس:</span> <span class="good-badge">'+luckyNum+'</span></div><div class="card"><span class="info-label">عدد ضد شانس:</span> <span class="bad-badge">'+antiLucky+'</span></div><div class="destiny-text">عدد '+luckyNum+' را دنبال کن.</div>';
+    document.getElementById(prefix+"P9").innerHTML='<ul style="margin-right:18px;"><li>'+behavior[0]+'</li><li>'+behavior[1]+'</li><li>'+behavior[2]+'</li></ul>';
+    var pred="";
+    if(quality==="مه آلود")pred="حقیقتی که الان نمی بینی، 3 روز دیگر روشن می شود";
+    else if(stone==="ابسیدین")pred="یک راز قدیمی امروز خود را نشان می دهد";
+    else if(luckyNum===tD)pred="عدد شانس با عدد روز یکی است! امروز روز ویژه توست";
+    else if(energy==="ناگهانی")pred="امروز منتظر یک اتفاق غیرمنتظره باش";
+    else pred="به حرف دلت گوش کن. ستاره ها می گویند "+behavior[0].toLowerCase();
+    document.getElementById(prefix+"P10").innerHTML='<div class="destiny-text">'+pred+'<br><br>بهترین کار امروز: '+behavior[1]+'</div>';
+}
+
+function renderHoroscope(y,m,d,prefix){
+    var dn=getDayOfYear(y,m,d);
+    var me=getMonthElement(m,y);
+    var desc=elementDesc[me]||elementDesc["خاک"];
+    var stone=dailyStones[(d*23+m*17+y*11)%dailyStones.length];
+    var color=dailyColors[(d*19+m*13+y*7)%dailyColors.length];
+    var badColor=dailyBadColors[(d*29+m*11+y*5)%dailyBadColors.length];
+    var food=dailyFoods[(d*31+m*19+y*3)%dailyFoods.length];
+    var herb=dailyHerbs[(d*13+m*23+y*2)%dailyHerbs.length];
+    var incense=dailyIncense[(d*17+m*29+y*13)%dailyIncense.length];
+    var perfectMate=dailyPerfectMate[(d*11+m*31+y*7)%dailyPerfectMate.length];
+    var badMate=dailyBadMate[(d*7+m*13+y*5)%dailyBadMate.length];
+    var behavior=dailyBehaviors[(d*37+m*41+y*23)%dailyBehaviors.length];
+    var luckyNum=(d*7+m*13+y*3)%30+1;
+    var antiLucky=(luckyNum*3)%30+1;
+    var quality=dailyQualities[(d*11+m*19+y*5)%dailyQualities.length];
+    var energy=dailyEnergies[(d*5+m*23+y*7)%dailyEnergies.length];
+    var signTotem=getSignTotem(dn);
+    var dirPlanet=getDirPlanet(dn);
+    var yy=getYinYang(dn);
+    var ch=getChinese(y);
+    var kn=getKarmicNumber(y,m,d);
+    document.getElementById(prefix+"P1").innerHTML='<div class="grid-2"><div><div class="info-row"><span class="info-label">تاریخ:</span><span class="info-value">'+y+'/'+m+'/'+d+'</span></div><div class="info-row"><span class="info-label">عنصر ماه:</span><span class="info-value">'+me+'</span></div><div class="info-row"><span class="info-label">برج فلکی:</span><span class="info-value">'+signTotem.sign+'</span></div><div class="info-row"><span class="info-label">سمبل حیات:</span><span class="info-value">'+signTotem.totem+'</span></div></div><div><div class="info-row"><span class="info-label">سال چینی:</span><span class="info-value">'+ch+'</span></div><div class="info-row"><span class="info-label">یین/یانگ:</span><span class="info-value">'+yy+'</span></div><div class="info-row"><span class="info-label">عدد کارمایی:</span><span class="info-value">'+kn+'</span></div><div class="info-row"><span class="info-label">شماره روز سال:</span><span class="info-value">'+dn+'</span></div></div></div><div class="destiny-text">'+desc+'</div>';
+    document.getElementById(prefix+"P2").innerHTML='<div class="info-row"><span class="info-label">کیفیت روز:</span><span class="info-value">'+quality+'</span></div><div class="info-row"><span class="info-label">انرژی روز:</span><span class="info-value">'+energy+'</span></div><div class="destiny-text">انرژی '+energy+' بر تمام فعالیت ها حاکم است.</div>';
+    document.getElementById(prefix+"P3").innerHTML='<div class="info-row"><span class="info-label">جهت روز:</span><span class="info-value">'+dirPlanet.dir+'</span></div><div class="info-row"><span class="info-label">سیاره حاکم:</span><span class="info-value">'+dirPlanet.planet+'</span></div><div class="destiny-text">جهت '+dirPlanet.dir+': '+(dirPlanet.dir==="شمال"?"آغاز":dirPlanet.dir==="غرب"?"تعادل":dirPlanet.dir==="جنوب"?"دگرگونی":"پیام")+'</div>';
+    document.getElementById(prefix+"P4").innerHTML='<div class="card"><span class="info-label">سنگ طالع:</span> '+stone+'</div><div class="destiny-text">سنگ '+stone+' را همراه داشته باش.</div>';
+    document.getElementById(prefix+"P5").innerHTML='<div class="card"><span class="info-label">رنگ شانس:</span> <span class="good-badge">'+color+'</span></div><div class="card"><span class="info-label">رنگ ضد شانس:</span> <span class="bad-badge">'+badColor+'</span></div><div class="destiny-text">از '+color+' استفاده کن.</div>';
+    document.getElementById(prefix+"P6").innerHTML='<div class="card"><span class="info-label">غذای شانس:</span> '+food+'</div><div class="card"><span class="info-label">گیاه دارویی:</span> '+herb+'</div><div class="destiny-text">خوردن '+food+' انرژی مثبت می آورد.</div>';
+    document.getElementById(prefix+"P7").innerHTML='<div class="card"><span class="info-label">جفت مناسب:</span> <span class="good-badge">'+perfectMate+'</span></div><div class="card"><span class="info-label">جفت نامناسب:</span> <span class="bad-badge">'+badMate+'</span></div><div class="destiny-text">با '+perfectMate+' ارتباط برقرار کن.</div>';
+    document.getElementById(prefix+"P8").innerHTML='<div class="card"><span class="info-label">عدد شانس:</span> <span class="good-badge">'+luckyNum+'</span></div><div class="destiny-text">عدد '+luckyNum+' را دنبال کن.</div>';
+    document.getElementById(prefix+"P9").innerHTML='<ul style="margin-right:18px;"><li>'+behavior[0]+'</li><li>'+behavior[1]+'</li><li>'+behavior[2]+'</li></ul>';
+    document.getElementById(prefix+"P10").innerHTML='<div class="destiny-text">به حرف دلت گوش کن.</div>';
+}
+
+// ==================== داده‌های تحلیل عدد کارمایی (بیش از 100 ترکیب) ====================
+const karmicData = {
+    1: { title: "آغازگر و پیشرو", life: "مسیر زندگی تو پر از شروع‌های تازه است. تو رهبر متولد شده‌ای.", mindset: "ذهن مستقل و نوآور داری.", behavior: "مستقل، مصمم، گاهی لجباز.", position: "در موقعیت‌های رهبری بهترین عملکرد را داری.", luck: "اعداد 1، 10، 19، 28. رنگ طلایی و قرمز." },
+    2: { title: "صلح‌طلب و هماهنگ", life: "زندگی تو درباره تعادل و هماهنگی است.", mindset: "ذهن دیپلماتیک داری.", behavior: "صبور، مهربان، شنونده خوب.", position: "در کارهای تیمی و مشاوره درخشان هستی.", luck: "اعداد 2، 11، 20، 29. رنگ آبی و سفید." },
+    3: { title: "خلاق و خوش‌بیان", life: "زندگی تو آمیخته با هنر و خلاقیت است.", mindset: "ذهن خلاق و پرانرژی.", behavior: "اجتماعی، خوش‌مشرب، عاشق هنر.", position: "در هنر، نویسندگی، موسیقی موفق هستی.", luck: "اعداد 3، 12، 21، 30. رنگ زرد و نارنجی." },
+    4: { title: "ساختارگرا و منظم", life: "زندگی تو بر پایه نظم و انضباط است.", mindset: "ذهن سازمان‌یافته و عملگرا.", behavior: "مسئولیت‌پذیر، سختکوش، منظم.", position: "در مدیریت پروژه، معماری، حسابداری موفق هستی.", luck: "اعداد 4، 13، 22. رنگ سبز و قهوه‌ای." },
+    5: { title: "آزادی‌خواه و ماجراجو", life: "زندگی تو پر از سفر و ماجراجویی است.", mindset: "ذهن کنجکاو و آزاد.", behavior: "پرتحرک، انعطاف‌پذیر.", position: "در فروش، بازاریابی، سفر موفق هستی.", luck: "اعداد 5، 14، 23. رنگ نارنجی و فیروزه‌ای." },
+    6: { title: "پشتیبان و خانواده‌دوست", life: "زندگی تو درباره عشق و مسئولیت است.", mindset: "ذهن دلسوز و محافظه‌کار.", behavior: "مهربان، فداکار، مسئولیت‌پذیر.", position: "در آموزش، پزشکی، مشاوره موفق هستی.", luck: "اعداد 6، 15، 24. رنگ صورتی و آبی آسمانی." },
+    7: { title: "جستجوگر و عارف", life: "زندگی تو جستجوی حقیقت و دانش پنهان است.", mindset: "ذهن تحلیل‌گر و عمیق.", behavior: "تنهاگرا، متفکر، محقق.", position: "در تحقیق، علم، عرفان موفق هستی.", luck: "اعداد 7، 16، 25. رنگ بنفش و نیلی." },
+    8: { title: "قدرتمند و موفق", life: "زندگی تو درباره قدرت و موفقیت مادی است.", mindset: "ذهن تجاری و راهبردی.", behavior: "مقتدر، هدف‌گرا، جاه‌طلب.", position: "در مدیریت ارشد، امور مالی موفق هستی.", luck: "اعداد 8، 17، 26. رنگ مشکی و طلایی." },
+    9: { title: "انسان‌دوست و آرمان‌خواه", life: "زندگی تو خدمت به بشریت است.", mindset: "ذهن جهانی و آرمان‌خواه.", behavior: "بخشنده، ایده‌آلیست، فداکار.", position: "در امور خیریه، هنر موفق هستی.", luck: "اعداد 9، 18، 27. رنگ سفید و طلایی." }
+};
+const elementSubData = {
+    "یخ":{strength:"صبوری و حفظ اسرار",weakness:"سختی در ابراز احساسات"},
+    "آتش":{strength:"شجاعت و رهبری",weakness:"تکانشی و عجول بودن"},
+    "خاک":{strength:"قابلیت اعتماد و صبوری",weakness:"مقاومت در برابر تغییر"},
+    "رعد":{strength:"تغییردهنده و الهام‌بخش",weakness:"غیرقابل پیش‌بینی بودن"},
+    "سنگ":{strength:"وفاداری و استقامت",weakness:"لجاجت و انعطاف‌ناپذیری"},
+    "گیاه":{strength:"انعطاف و سازگاری",weakness:"واکنش دیرهنگام"},
+    "چوب":{strength:"کاربردی بودن و خلاقیت",weakness:"خشکی در بحران"},
+    "باد":{strength:"ارتباطات و سرعت عمل",weakness:"بی‌ثباتی و عدم تعهد"},
+    "آب روان":{strength:"همدلی و انطباق",weakness:"احساسات بیش از حد"},
+    "فلز":{strength:"قاطعیت و ارزشمندی",weakness:"زنگ‌زدگی در زمان"},
+    "خلأ":{strength:"پذیرندگی و آرامش",weakness:"احساس پوچی"},
+    "نور":{strength:"آگاهی و شفافیت",weakness:"ناتوانی در پنهان کردن"}
+};
+const totemSubData = {
+    "شیر":{quality:"شجاعت و قدرتمندی",advice:"یاد بگیر گاهی آرامش بگیری. همیشه در حالت حمله نباش."},
+    "عقاب":{quality:"دید بلند و آزادی",advice:"از بلندی به زندگی نگاه کن. جزئیات کوچک را نبین."},
+    "مار":{quality:"تحول و رهایی",advice:"پوست کهنه را رها کن. تغییر برای تو طبیعی است."},
+    "لاک پشت":{quality:"صبر و حکمت",advice:"آهسته اما پیوسته به مسیرت ادامه بده. عجله دشمن توست."}
+};
+const yinyangSubData = {
+    "یانگ":"انرژی فعال، برون‌گرا و مردانه. بهترین زمان برای شروع کارهای جدید و اقدام کردن.",
+    "یین":"انرژی پذیرا، درون‌گرا و زنانه. زمان شنیدن، یادگیری و پرورش ایده‌ها."
+};
+
+// ترکیب‌های ویژه عنصر + سمبل
+const specialCombinations = [
+    { element: "آتش", totem: "شیر", text: "آتش و شیر: تو یک رهبر متولد شده‌ای. شجاعت و قدرت در وجودت جاریست." },
+    { element: "آب روان", totem: "مار", text: "آب و مار: تحول و انعطاف در زندگی توست. هر بار که پوست می‌اندازی، قویتر می‌شوی." },
+    { element: "خاک", totem: "لاک پشت", text: "خاک و لاک پشت: صبورترین ترکیب. عمر طولانی و حکمت عمیق در انتظار توست." },
+    { element: "باد", totem: "عقاب", text: "باد و عقاب: آزادی و دید بلند. از بلندی به زندگی نگاه می‌کنی." },
+    { element: "رعد", totem: "شیر", text: "رعد و شیر: قدرت ناگهانی و شجاعت. تصمیمات تو غیرقابل پیش‌بینی اما درست است." },
+    { element: "یخ", totem: "مار", text: "یخ و مار: تغییرات سرد و حساب شده. هر تحولی در زندگی تو برنامه دارد." },
+    { element: "نور", totem: "عقاب", text: "نور و عقاب: روشنایی و آزادی. حقیقت را از دور می‌بینی." },
+    { element: "خلأ", totem: "لاک پشت", text: "خلأ و لاک پشت: سکوت مطلق و حکمت عمیق. حرف‌هایت کوتاه اما پر از معناست." }
+];
+
+function analyzeKarmic(){
+    var k=parseInt(document.getElementById("karmicNumber").value);
+    var elem=document.getElementById("karmicElement").value;
+    var yy=document.getElementById("karmicYinyang").value;
+    var tot=document.getElementById("karmicTotem").value;
+    if(isNaN(k)||k<1||k>9){
+        document.getElementById("karmicResult").innerHTML='<div class="section-title">❌ خطا</div><div style="text-align:center;color:#ff6b6b;">لطفاً عدد کارمایی معتبر (1 تا 9) وارد کنید</div>';
+        return;
+    }
+    var kd=karmicData[k];
+    var ed=elementSubData[elem];
+    var td=totemSubData[tot];
+    var yd=yinyangSubData[yy];
+    var luckNum=(k*7+elem.length*3+tot.length*2)%40+1;
+    
+    // جستجوی ترکیب ویژه
+    var specialText="";
+    for(var i=0;i<specialCombinations.length;i++){
+        if(specialCombinations[i].element===elem && specialCombinations[i].totem===tot){
+            specialText=specialCombinations[i].text;
+            break;
+        }
+    }
+    
+    var html='<div class="result-section"><h4>🔢 عدد کارمایی '+k+' - '+kd.title+'</h4><p>'+kd.life+'</p><p><strong>🧠 طرز فکر:</strong> '+kd.mindset+'</p><p><strong>🔄 رفتار:</strong> '+kd.behavior+'</p><p><strong>💼 موقعیت شغلی:</strong> '+kd.position+'</p></div>';
+    html+='<div class="result-section"><h4>🧬 عنصر '+elem+'</h4><p><strong>✨ قدرت تو:</strong> '+ed.strength+'<br><strong>⚠️ چالش تو:</strong> '+ed.weakness+'</p></div>';
+    html+='<div class="result-section"><h4>☯ '+yy+'</h4><p>'+yd+'</p></div>';
+    html+='<div class="result-section"><h4>🦁 سمبل '+tot+'</h4><p><strong>💎 کیفیت ذاتی:</strong> '+td.quality+'<br><strong>💡 توصیه:</strong> '+td.advice+'</p></div>';
+    if(specialText){
+        html+='<div class="result-section"><h4>⚡ ترکیب ویژه</h4><p>'+specialText+'</p></div>';
+    }
+    html+='<div class="result-section"><h4>🍀 طالع شانس</h4><div class="luck-number">'+luckNum+'</div><p>'+kd.luck+'</p></div>';
+    html+='<div class="result-section"><h4>💎 جمع‌بندی نهایی</h4><p>ترکیب '+elem+' با سمبل '+tot+' و عدد کارمایی '+k+' تو را به یک شخصیت منحصربفرد تبدیل کرده است. با تکیه بر قدرت '+ed.strength+' و پذیرش توصیه سمبل '+tot+'، مسیر زندگی ات را هموار کن.</p></div>';
+    document.getElementById("karmicResult").innerHTML=html;
+}
+
+// ==================== راه‌اندازی ====================
+function populateSelect(selId,start,end){var sel=document.getElementById(selId);sel.innerHTML="";for(var i=start;i<=end;i++){var opt=document.createElement("option");opt.value=i;opt.text=i;sel.appendChild(opt);}}
+populateSelect("yearSelect",1330,1405);
+populateSelect("dailyYear",1330,1405);
+populateSelect("birthYear",1330,1405);
+function populateMonths(selId){var sel=document.getElementById(selId);sel.innerHTML="";var mn=["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"];for(var m=1;m<=12;m++){var opt=document.createElement("option");opt.value=m;opt.text=mn[m-1];sel.appendChild(opt);}}
+populateMonths("monthSelect");
+populateMonths("dailyMonth");
+populateMonths("birthMonth");
+function updateDaysForSelect(ySelId,mSelId,dSelId){var y=parseInt(document.getElementById(ySelId).value);var m=parseInt(document.getElementById(mSelId).value);if(!y||!m)return;var max=getMonthDays(y,m);var dSel=document.getElementById(dSelId);dSel.innerHTML="";for(var d=1;d<=max;d++){var opt=document.createElement("option");opt.value=d;opt.text=d;dSel.appendChild(opt);}}
+document.getElementById("yearSelect").addEventListener("change",function(){updateDaysForSelect("yearSelect","monthSelect","daySelect");});
+document.getElementById("monthSelect").addEventListener("change",function(){updateDaysForSelect("yearSelect","monthSelect","daySelect");});
+document.getElementById("dailyYear").addEventListener("change",function(){updateDaysForSelect("dailyYear","dailyMonth","dailyDay");});
+document.getElementById("dailyMonth").addEventListener("change",function(){updateDaysForSelect("dailyYear","dailyMonth","dailyDay");});
+document.getElementById("birthYear").addEventListener("change",function(){updateDaysForSelect("birthYear","birthMonth","birthDay");});
+document.getElementById("birthMonth").addEventListener("change",function(){updateDaysForSelect("birthYear","birthMonth","birthDay");});
+updateDaysForSelect("yearSelect","monthSelect","daySelect");
+updateDaysForSelect("dailyYear","dailyMonth","dailyDay");
+updateDaysForSelect("birthYear","birthMonth","birthDay");
+document.getElementById("birthYear").value=1370;document.getElementById("birthMonth").value=1;updateDaysForSelect("birthYear","birthMonth","birthDay");document.getElementById("birthDay").value=1;
+document.getElementById("dailyYear").value=1405;document.getElementById("dailyMonth").value=3;updateDaysForSelect("dailyYear","dailyMonth","dailyDay");document.getElementById("dailyDay").value=13;
+document.getElementById("yearSelect").value=1370;document.getElementById("monthSelect").value=1;updateDaysForSelect("yearSelect","monthSelect","daySelect");document.getElementById("daySelect").value=1;
+document.getElementById("dailyBtn").addEventListener("click",function(){var bY=parseInt(document.getElementById("birthYear").value);var bM=parseInt(document.getElementById("birthMonth").value);var bD=parseInt(document.getElementById("birthDay").value);var tY=parseInt(document.getElementById("dailyYear").value);var tM=parseInt(document.getElementById("dailyMonth").value);var tD=parseInt(document.getElementById("dailyDay").value);if(bY&&bM&&bD&&tY&&tM&&tD){renderPersonalHoroscope(bY,bM,bD,tY,tM,tD,"daily");showInnerPage("daily",1);}});
+document.getElementById("customBtn").addEventListener("click",function(){var y=parseInt(document.getElementById("yearSelect").value);var m=parseInt(document.getElementById("monthSelect").value);var d=parseInt(document.getElementById("daySelect").value);if(y&&m&&d){renderHoroscope(y,m,d,"custom");showInnerPage("custom",1);}});
+document.getElementById("karmicBtn").addEventListener("click",analyzeKarmic);
+function showInnerPage(prefix,pageNum){for(var i=1;i<=10;i++){var pg=document.getElementById(prefix+"Page"+i);if(pg)pg.classList.remove("active-page");}var sp=document.getElementById(prefix+"Page"+pageNum);if(sp)sp.classList.add("active-page");var btns=document.querySelectorAll("#"+prefix+"Tabs .inner-tab");btns.forEach(function(btn,idx){if(idx===pageNum-1)btn.classList.add("active");else btn.classList.remove("active");});}
+function showMainSection(section){document.getElementById("dailySection").classList.remove("active-panel");document.getElementById("customSection").classList.remove("active-panel");document.getElementById("karmicSection").classList.remove("active-panel");document.getElementById(section+"Section").classList.add("active-panel");var tabs=document.querySelectorAll(".main-tab");if(section==="daily"){tabs[0].classList.add("active");tabs[1].classList.remove("active");tabs[2].classList.remove("active");}else if(section==="custom"){tabs[0].classList.remove("active");tabs[1].classList.add("active");tabs[2].classList.remove("active");}else{tabs[0].classList.remove("active");tabs[1].classList.remove("active");tabs[2].classList.add("active");}}
+setTimeout(function(){showInnerPage("daily",1);showInnerPage("custom",1);document.getElementById("dailyBtn").click();document.getElementById("customBtn").click();},100);
+</script>
+</body>
+</html>
